@@ -263,6 +263,32 @@
 
     const formatUnit = (value) => String(value).padStart(2, "0");
     const backgroundMusic = document.getElementById("bg-music");
+    const animatedTextSelectors = [
+      ".intro-panel .script",
+      ".intro-panel .label",
+      ".intro-panel .address",
+      ".intro-panel .date-box span",
+      ".intro-panel .date-box small",
+      ".intro-panel .date-box strong",
+      ".section-script",
+      ".serif-title",
+      ".caps",
+      ".list",
+      ".countdown-copy",
+      ".countdown-note",
+      ".countdown-item strong",
+      ".countdown-item span",
+      ".time",
+      ".event-title",
+      ".event-copy",
+      ".detail-title",
+      ".detail-copy",
+      ".rsvp-word",
+      ".rsvp-date",
+      ".thanks-label",
+      ".closing",
+      ".signature"
+    ];
 
     const startBackgroundMusic = () => {
       if (!backgroundMusic) {
@@ -283,6 +309,46 @@
       startBackgroundMusic();
       document.removeEventListener("touchstart", enableMusicOnFirstTouch);
       document.removeEventListener("click", enableMusicOnFirstTouch);
+    };
+
+    const setupTextAnimations = () => {
+      const animatedElements = document.querySelectorAll(animatedTextSelectors.join(", "));
+
+      animatedElements.forEach((element, index) => {
+        const animationClass = index % 3 === 0 ? "text-animate--glide" : "text-animate--rise";
+        element.classList.add("text-animate", animationClass);
+      });
+
+      if (!("IntersectionObserver" in window)) {
+        animatedElements.forEach((element, index) => {
+          element.style.setProperty("--text-delay", `${Math.min(index * 0.04, 0.5)}s`);
+          element.classList.add("is-visible");
+        });
+        return;
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) {
+            return;
+          }
+
+          const group = entry.target.querySelectorAll(".text-animate");
+          group.forEach((element, index) => {
+            element.style.setProperty("--text-delay", `${Math.min(index * 0.08, 0.72)}s`);
+            element.classList.add("is-visible");
+          });
+
+          observer.unobserve(entry.target);
+        });
+      }, {
+        threshold: 0.2,
+        rootMargin: "0px 0px -40px 0px"
+      });
+
+      document.querySelectorAll(".column, .wide-photo").forEach((section) => {
+        observer.observe(section);
+      });
     };
 
     const updateCountdown = () => {
@@ -311,6 +377,7 @@
 
     updateBackgroundParallax();
     updateCountdown();
+    setupTextAnimations();
     startBackgroundMusic();
     window.addEventListener("scroll", updateBackgroundParallax, { passive: true });
     window.setInterval(updateCountdown, 1000);

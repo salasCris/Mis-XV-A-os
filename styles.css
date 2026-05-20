@@ -550,6 +550,36 @@ body::before {
   animation: reveal 0.9s ease forwards;
 }
 
+.text-animate {
+  opacity: 0;
+  will-change: transform, opacity, filter;
+}
+
+.text-animate.is-visible {
+  animation-duration: 1s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-fill-mode: forwards;
+  animation-delay: var(--text-delay, 0s);
+}
+
+.text-animate--rise {
+  transform: translateY(24px);
+  filter: blur(6px);
+}
+
+.text-animate--rise.is-visible {
+  animation-name: textRise;
+}
+
+.text-animate--glide {
+  transform: translateX(-22px);
+  filter: blur(8px);
+}
+
+.text-animate--glide.is-visible {
+  animation-name: textGlide;
+}
+
 .delay-1 { animation-delay: 0.12s; }
 .delay-2 { animation-delay: 0.24s; }
 .delay-3 { animation-delay: 0.36s; }
@@ -568,6 +598,43 @@ body::before {
   }
   50% {
     transform: translateY(-10px) rotate(3deg);
+  }
+}
+
+@keyframes textRise {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+    filter: blur(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes textGlide {
+  0% {
+    opacity: 0;
+    transform: translateX(-22px);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .text-animate,
+  .text-animate.is-visible {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    animation: none;
   }
 }
 
