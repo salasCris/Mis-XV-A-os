@@ -10,6 +10,36 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <button class="music-toggle" id="music-toggle" type="button" aria-label="Reproducir música">
+    <span class="music-toggle-label">Activar m&uacute;sica</span>
+  </button>
+  <div class="intro-overlay" id="intro-overlay" aria-hidden="false">
+    <div class="intro-card">
+      <p class="script intro-kicker">Est&aacute;s invitado a</p>
+      <h2 class="script intro-title">Mis XV a&ntilde;os</h2>
+      <p class="intro-copy">Una noche llena de magia, amor y momentos inolvidables.</p>
+      <button class="music-toggle intro-music-toggle" id="intro-music-toggle" type="button" aria-label="Reproducir mÃºsica">
+        <span class="music-toggle-label">Activar m&uacute;sica</span>
+      </button>
+      <button class="intro-button" id="intro-button" type="button">Abrir invitaci&oacute;n</button>
+    </div>
+  </div>
+  <div class="ambient-petals" aria-hidden="true">
+    <span class="petal petal-1"></span>
+    <span class="petal petal-2"></span>
+    <span class="petal petal-3"></span>
+    <span class="petal petal-4"></span>
+    <span class="petal petal-5"></span>
+    <span class="petal petal-6"></span>
+    <span class="petal petal-7"></span>
+    <span class="petal petal-8"></span>
+    <span class="petal petal-9"></span>
+    <span class="petal petal-10"></span>
+    <span class="twinkle twinkle-1"></span>
+    <span class="twinkle twinkle-2"></span>
+    <span class="twinkle twinkle-3"></span>
+    <span class="twinkle twinkle-4"></span>
+  </div>
   <main class="invitation">
     <section class="hero section">
       <div class="flower flower-left" aria-hidden="true"></div>
@@ -214,6 +244,26 @@
       </div>
     </section>
 
+    <section class="section soft-band memories-section">
+      <div class="column reveal delay-4">
+        <div class="panel memories-panel">
+          <p class="script section-script">Un sue&ntilde;o</p>
+          <p class="memory-copy">
+            Mis XV a&ntilde;os son el reflejo de un sue&ntilde;o lleno de ilusiones, amor y momentos que guardar&eacute; por siempre en mi coraz&oacute;n.
+          </p>
+
+          <div class="memory-gallery">
+            <figure class="memory-frame">
+              <img src="img/DSC04030.webp" alt="Camila celebrando sus XV años">
+            </figure>
+            <figure class="memory-frame">
+              <img src="img/DSC04074.webp" alt="Camila en una sesión para sus XV años">
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="rsvp" class="section soft-band rsvp-section">
       <div class="butterfly butterfly-left small" aria-hidden="true">&#129419;</div>
       <div class="butterfly butterfly-right small" aria-hidden="true">&#129419;</div>
@@ -253,6 +303,9 @@
     };
 
     const eventDate = new Date("2026-07-18T19:00:00");
+    const introOverlay = document.getElementById("intro-overlay");
+    const introButton = document.getElementById("intro-button");
+    const introMusicToggle = document.getElementById("intro-music-toggle");
     const countdownElements = {
       days: document.getElementById("countdown-days"),
       hours: document.getElementById("countdown-hours"),
@@ -263,6 +316,7 @@
 
     const formatUnit = (value) => String(value).padStart(2, "0");
     const backgroundMusic = document.getElementById("bg-music");
+    const musicToggle = document.getElementById("music-toggle");
     const animatedTextSelectors = [
       ".intro-panel .script",
       ".intro-panel .label",
@@ -290,6 +344,22 @@
       ".signature"
     ];
 
+    const setMusicButtonState = (isPlaying) => {
+      [musicToggle, introMusicToggle].forEach((button) => {
+        if (!button) {
+          return;
+        }
+
+        const label = button.querySelector(".music-toggle-label");
+        button.classList.toggle("is-playing", isPlaying);
+        button.setAttribute("aria-label", isPlaying ? "Pausar mÃºsica" : "Reproducir mÃºsica");
+
+        if (label) {
+          label.textContent = isPlaying ? "Pausar m\u00fasica" : "Activar m\u00fasica";
+        }
+      });
+    };
+
     const startBackgroundMusic = () => {
       if (!backgroundMusic) {
         return;
@@ -299,9 +369,32 @@
 
       const playPromise = backgroundMusic.play();
       if (playPromise && typeof playPromise.catch === "function") {
-        playPromise.catch(() => {
-          // Mobile browsers often require a user gesture before audio can play.
+        playPromise.then(() => {
+          if (musicToggle) {
+            musicToggle.classList.add("is-playing");
+            musicToggle.querySelector(".music-toggle-label").textContent = "Pausar m\u00fasica";
+            musicToggle.setAttribute("aria-label", "Pausar música");
+          }
+        }).catch(() => {
+          if (musicToggle) {
+            musicToggle.classList.remove("is-playing");
+            musicToggle.querySelector(".music-toggle-label").textContent = "Activar m\u00fasica";
+            musicToggle.setAttribute("aria-label", "Reproducir música");
+          }
         });
+      }
+    };
+
+    const pauseBackgroundMusic = () => {
+      if (!backgroundMusic) {
+        return;
+      }
+
+      backgroundMusic.pause();
+      if (musicToggle) {
+        musicToggle.classList.remove("is-playing");
+        musicToggle.querySelector(".music-toggle-label").textContent = "Activar m\u00fasica";
+        musicToggle.setAttribute("aria-label", "Reproducir música");
       }
     };
 
@@ -309,6 +402,15 @@
       startBackgroundMusic();
       document.removeEventListener("touchstart", enableMusicOnFirstTouch);
       document.removeEventListener("click", enableMusicOnFirstTouch);
+    };
+
+    const openInvitation = () => {
+      if (introOverlay) {
+        introOverlay.classList.add("is-hidden");
+        introOverlay.setAttribute("aria-hidden", "true");
+      }
+
+      startBackgroundMusic();
     };
 
     const setupTextAnimations = () => {
@@ -383,6 +485,21 @@
     window.setInterval(updateCountdown, 1000);
     document.addEventListener("touchstart", enableMusicOnFirstTouch, { passive: true });
     document.addEventListener("click", enableMusicOnFirstTouch, { passive: true });
+
+    if (musicToggle) {
+      musicToggle.addEventListener("click", () => {
+        if (backgroundMusic && !backgroundMusic.paused) {
+          pauseBackgroundMusic();
+          return;
+        }
+
+        startBackgroundMusic();
+      });
+    }
+
+    if (introButton) {
+      introButton.addEventListener("click", openInvitation);
+    }
   </script>
 </body>
 </html>
