@@ -371,14 +371,7 @@ body::before {
 }
 
 .timeline-panel::before {
-  content: "";
-  position: absolute;
-  top: 92px;
-  bottom: 36px;
-  left: 50%;
-  width: 1px;
-  background: rgba(120, 120, 120, 0.4);
-  transform: translateX(-50%);
+  display: none;
 }
 
 .timeline-item {
@@ -586,7 +579,7 @@ body::before {
   .column,
   .wide-photo,
   .wide-photo.second {
-    width: min(100%, 360px);
+    width: min(100%, 322px);
   }
 
   .hero {
@@ -714,7 +707,7 @@ body::before {
   .column,
   .wide-photo,
   .wide-photo.second {
-    width: min(100%, 342px);
+    width: min(100%, 304px);
   }
 
   .script.section-script {
@@ -779,6 +772,10 @@ body::before {
   .timeline-item {
     grid-template-columns: 92px 18px 1fr;
     align-items: start;
+  }
+
+  .timeline-panel::before {
+    display: none;
   }
 
   .time {
