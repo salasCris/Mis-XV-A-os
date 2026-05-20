@@ -20,7 +20,7 @@
         <div class="panel intro-panel">
           <p class="script overline">mis</p>
           <h1 class="script title">XV a&ntilde;os</h1>
-          <p class="label">Acomp&aacute;&ntilde;anos a celebrar</p>
+          <p class="label">Acomp&aacute;&ntilde;anos a celebrar los XV a&ntilde;os de</p>
           <p class="script celebrant">Camila</p>
 
           <div class="date-box">
@@ -36,7 +36,6 @@
           </div>
 
           <p class="address">Una noche especial para celebrar mis XV a&ntilde;os contigo</p>
-          <a class="button" href="#programa">Ver programa</a>
         </div>
       </div>
     </section>
@@ -74,12 +73,25 @@
       <div class="wide-photo reveal delay-2">
         <div class="photo-overlay">
           <p class="script countdown-copy">Te espero<br>para celebrar conmigo</p>
-          <div class="countdown">
-            <div><strong>18</strong><span>Julio</span></div>
-            <div><strong>03</strong><span>Misa</span></div>
-            <div><strong>05</strong><span>Recepci&oacute;n</span></div>
-            <div><strong>07</strong><span>Vals</span></div>
+          <div class="countdown" id="countdown" aria-label="Cuenta regresiva para el evento">
+            <div class="countdown-item">
+              <strong id="countdown-days">00</strong>
+              <span>D&iacute;as</span>
+            </div>
+            <div class="countdown-item">
+              <strong id="countdown-hours">00</strong>
+              <span>Horas</span>
+            </div>
+            <div class="countdown-item">
+              <strong id="countdown-minutes">00</strong>
+              <span>Minutos</span>
+            </div>
+            <div class="countdown-item">
+              <strong id="countdown-seconds">00</strong>
+              <span>Segundos</span>
+            </div>
           </div>
+          <p class="countdown-note" id="countdown-note">Faltan muy poquitos momentos para celebrar juntos.</p>
         </div>
       </div>
     </section>
@@ -97,7 +109,24 @@
             <div class="dot"></div>
             <div class="event">
               <p class="event-title">Misa</p>
-              <p class="event-copy">Parroquia de San Juan Bautista</p>
+              <p class="event-copy">
+                <a
+                  class="map-link"
+                  href="https://www.google.com/maps/search/?api=1&query=20.275599046356916,-97.95840874132693"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Parroquia de San Juan Bautista
+                </a>
+              </p>
+              <div class="map-embed">
+                <iframe
+                  title="Mapa de la Parroquia de San Juan Bautista"
+                  src="https://www.google.com/maps?q=20.275599046356916,-97.95840874132693&t=k&z=16&output=embed"
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                ></iframe>
+              </div>
             </div>
           </div>
 
@@ -106,7 +135,26 @@
             <div class="dot"></div>
             <div class="event">
               <p class="event-title">Recepci&oacute;n</p>
-              <p class="event-copy">Sal&oacute;n Real del Caf&eacute;<br>Lagunillas</p>
+              <p class="event-copy">
+                <a
+                  class="map-link"
+                  href="https://www.google.com/maps/search/?api=1&query=20.226594330694375,-97.95043739444647"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Sal&oacute;n Real del Caf&eacute;
+                </a>
+                <br>
+                Lagunillas
+              </p>
+              <div class="map-embed">
+                <iframe
+                  title="Mapa del Salón Real del Café"
+                  src="https://www.google.com/maps?q=20.226594330694375,-97.95043739444647&t=k&z=16&output=embed"
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                ></iframe>
+              </div>
             </div>
           </div>
 
@@ -172,10 +220,12 @@
 
       <div class="column reveal delay-4">
         <div class="panel rsvp-panel">
-          <p class="script section-script">nos vemos</p>
+          <p class="script section-script">nos vemos el</p>
           <p class="rsvp-word">18</p>
-          <p class="script rsvp-date">de julio 2026</p>
-          <a class="button" href="#programa">Celebrar juntos</a>
+          <p class="script rsvp-date">de julio de 2026</p>
+          <p class="script rsvp-date">para Celebrar juntos este gran Momento
+
+          </p>
         </div>
       </div>
     </section>
@@ -199,8 +249,45 @@
       document.body.style.setProperty("--bg-position-y", `${shift}px`);
     };
 
+    const eventDate = new Date("2026-07-18T19:00:00");
+    const countdownElements = {
+      days: document.getElementById("countdown-days"),
+      hours: document.getElementById("countdown-hours"),
+      minutes: document.getElementById("countdown-minutes"),
+      seconds: document.getElementById("countdown-seconds"),
+      note: document.getElementById("countdown-note")
+    };
+
+    const formatUnit = (value) => String(value).padStart(2, "0");
+
+    const updateCountdown = () => {
+      const now = new Date();
+      const difference = eventDate.getTime() - now.getTime();
+
+      if (difference <= 0) {
+        countdownElements.days.textContent = "00";
+        countdownElements.hours.textContent = "00";
+        countdownElements.minutes.textContent = "00";
+        countdownElements.seconds.textContent = "00";
+        countdownElements.note.textContent = "Hoy es el gran d\u00eda.";
+        return;
+      }
+
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((difference / (1000 * 60)) % 60);
+      const seconds = Math.floor((difference / 1000) % 60);
+
+      countdownElements.days.textContent = formatUnit(days);
+      countdownElements.hours.textContent = formatUnit(hours);
+      countdownElements.minutes.textContent = formatUnit(minutes);
+      countdownElements.seconds.textContent = formatUnit(seconds);
+    };
+
     updateBackgroundParallax();
+    updateCountdown();
     window.addEventListener("scroll", updateBackgroundParallax, { passive: true });
+    window.setInterval(updateCountdown, 1000);
   </script>
 </body>
 </html>
