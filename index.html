@@ -243,6 +243,9 @@
       </div>
     </section>
   </main>
+  <audio id="bg-music" preload="auto" loop playsinline>
+    <source src="sonidos/cancion.mpeg" type="audio/mpeg">
+  </audio>
   <script>
     const updateBackgroundParallax = () => {
       const shift = window.scrollY * -0.34;
@@ -259,6 +262,28 @@
     };
 
     const formatUnit = (value) => String(value).padStart(2, "0");
+    const backgroundMusic = document.getElementById("bg-music");
+
+    const startBackgroundMusic = () => {
+      if (!backgroundMusic) {
+        return;
+      }
+
+      backgroundMusic.volume = 0.85;
+
+      const playPromise = backgroundMusic.play();
+      if (playPromise && typeof playPromise.catch === "function") {
+        playPromise.catch(() => {
+          // Mobile browsers often require a user gesture before audio can play.
+        });
+      }
+    };
+
+    const enableMusicOnFirstTouch = () => {
+      startBackgroundMusic();
+      document.removeEventListener("touchstart", enableMusicOnFirstTouch);
+      document.removeEventListener("click", enableMusicOnFirstTouch);
+    };
 
     const updateCountdown = () => {
       const now = new Date();
@@ -286,8 +311,11 @@
 
     updateBackgroundParallax();
     updateCountdown();
+    startBackgroundMusic();
     window.addEventListener("scroll", updateBackgroundParallax, { passive: true });
     window.setInterval(updateCountdown, 1000);
+    document.addEventListener("touchstart", enableMusicOnFirstTouch, { passive: true });
+    document.addEventListener("click", enableMusicOnFirstTouch, { passive: true });
   </script>
 </body>
 </html>
