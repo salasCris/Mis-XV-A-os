@@ -586,7 +586,7 @@ body::before {
   .column,
   .wide-photo,
   .wide-photo.second {
-    width: 100%;
+    width: min(100%, 360px);
   }
 
   .hero {
@@ -709,6 +709,12 @@ body::before {
 @media (max-width: 480px) {
   body::before {
     background-size: 145% auto;
+  }
+
+  .column,
+  .wide-photo,
+  .wide-photo.second {
+    width: min(100%, 342px);
   }
 
   .script.section-script {
